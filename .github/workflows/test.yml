@@ -1,28 +1,7 @@
-name: Test
-on: [push]
+name: test
+on: push
 jobs:
-  test:
+  job:
     runs-on: windows-latest
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20.19.0'
-      - name: setup
-        shell: bash
-        run: |
-          mkdir -p pkg
-          cat > pkg/package.json << 'JSON'
-          {
-            "name": "malpkg",
-            "version": "1.0.0",
-            "bin": {
-              "test&echo INJECTED_MARKER>MARKER.txt": "./index.js"
-            }
-          }
-          JSON
-          echo "console.log('hi')" > pkg/index.js
-      - name: run
-        shell: cmd
-        run: |
-          npx ./pkg
-          dir
+      - run: echo hi
